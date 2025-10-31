@@ -40,7 +40,7 @@ class ComponentTest {
 
     @Test
     void contextLoads() throws Exception {
-        HttpResponse<String> response = httpClient.send(
+        var response = httpClient.send(
                 HttpRequest.newBuilder(createUri("actuator/health")).GET().build(),
                 HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
         );
@@ -49,6 +49,6 @@ class ComponentTest {
     }
 
     private URI createUri(String resource) {
-        return URI.create(String.format(URI_FORMAT, this.port, resource));
+        return URI.create(URI_FORMAT.formatted(this.port, resource));
     }
 }
