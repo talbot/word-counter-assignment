@@ -10,8 +10,6 @@ import org.openjdk.jcstress.annotations.Outcome;
 import org.openjdk.jcstress.annotations.State;
 import org.openjdk.jcstress.infra.results.LLL_Result;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class WordBatchServiceConcurrencyTest {
@@ -50,9 +48,9 @@ public class WordBatchServiceConcurrencyTest {
         public void flusher() {
             service.flush(counters -> counters.forEach(c -> {
                 if ("A".equals(c.key())) {
-                    flushA.set(c.count());
+                    flushA.getAndAdd(c.count());
                 } else if ("B".equals(c.key())) {
-                    flushB.set(c.count());
+                    flushB.getAndAdd(c.count());
                 } else {
                     flushUnknown.getAndAdd(c.count());
                 }

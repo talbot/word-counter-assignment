@@ -14,6 +14,7 @@
         <module>word-counter-assignment-batch</module>
         <module>word-counter-assignment-app</module>
         <module>word-counter-assignment-jcstress</module>
+        <module>word-counter-assignment-benchmark</module>
     </modules>
 
     <properties>
@@ -55,6 +56,16 @@
                         <source>${java.version}</source>
                         <target>${java.version}</target>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.6.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>

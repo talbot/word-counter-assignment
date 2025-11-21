@@ -4,4 +4,6 @@ module word.counter.assignment.app {
     requires spring.boot.autoconfigure;
     requires spring.web;
     requires jakarta.annotation;
+    requires org.slf4j;
+    requires word.counter.assignment.batch;
 }
