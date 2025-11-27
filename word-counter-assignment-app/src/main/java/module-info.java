@@ -6,4 +6,8 @@ module word.counter.assignment.app {
     requires jakarta.annotation;
     requires org.slf4j;
     requires word.counter.assignment.batch;
+
+    // Export packages to enable Spring support
+    exports com.example.javainterview;
+    exports com.example.javainterview.controller;
 }

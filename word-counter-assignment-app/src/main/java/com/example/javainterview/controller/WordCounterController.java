@@ -33,14 +33,14 @@ public class WordCounterController {
     }
 
     @PostMapping("/{word}")
-    public ResponseEntity<Long> accept(@PathVariable String word) {
+    public ResponseEntity<Long> accept(@PathVariable("word") String word) {
         consumer.accept(word);
         var count = words.compute(word, (key, value) -> value == null ? 1L : ++value);
         return ResponseEntity.ok(count);
     }
 
-    @GetMapping("/{words}")
-    public ResponseEntity<Long> get(@PathVariable String word) {
+    @GetMapping("/{word}")
+    public ResponseEntity<Long> get(@PathVariable("word") String word) {
         return ResponseEntity.ok(words.getOrDefault(word, 0L));
     }
 }
