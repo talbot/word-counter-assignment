@@ -17,63 +17,62 @@ import java.util.concurrent.TimeUnit;
 @Fork(1)
 @Warmup(iterations = 1)
 @Measurement(iterations = 2)
-@BenchmarkMode({ Mode.Throughput, Mode.AverageTime })
+@BenchmarkMode({ Mode.Throughput })
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class WordBatchServiceBenchmark {
 
     private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
-    private static final String GROUP_NAME = "ConcurrentWordBatch";
-    private static final String GROUP_NAME_SINGLE_SHOT = "ConcurrentWordBatchSingleShot";
+    private static final String GROUP_NAME_BASELINE = "ConcurrentWordBatchBaseline";
+    private static final String GROUP_NAME_MULTIPLE_WORDS = "ConcurrentWordBatchMultiWord";
+    private static final String GROUP_NAME_SINGLE_WORD = "ConcurrentWordBatchSingleWord";
     private static final int WRITE_THREAD_COUNT = 4;
     private static final int READ_THREAD_COUNT = 2;
     private static final int BOUND = Integer.MAX_VALUE >> 16;
 
     @Benchmark
-    @Group(GROUP_NAME)
+    @Group(GROUP_NAME_BASELINE)
     @GroupThreads(WRITE_THREAD_COUNT)
-    public void baseline(WordBatchServiceState state, Blackhole blackhole) {
+    public void baselineMultiWord(WordBatchServiceState state, Blackhole blackhole) {
         for (int i = 0; i < state.words; i++) {
             blackhole.consume(apply(i));
         }
     }
 
     @Benchmark
-    @Group(GROUP_NAME)
+    @Group(GROUP_NAME_MULTIPLE_WORDS)
     @GroupThreads(WRITE_THREAD_COUNT)
-    public void benchmarkAccept(WordBatchServiceState state) {
+    public void benchmarkAcceptMultiWord(WordBatchServiceState state) {
         for (int i = 0; i < state.words; i++) {
-            var word = apply(i);
-            state.accept(word);
+            state.accept(apply(i));
         }
     }
 
     @Benchmark
-    @Group(GROUP_NAME)
+    @Group(GROUP_NAME_MULTIPLE_WORDS)
     @GroupThreads(READ_THREAD_COUNT)
-    public void benchmarkFlush(WordBatchServiceState state, Blackhole blackhole) {
-        blackhole.consume(state.get().get());
+    public void benchmarkFlushMultiWord(WordBatchServiceState state, Blackhole blackhole) {
+        blackhole.consume(state.get());
     }
 
     @Benchmark
-    @Group(GROUP_NAME_SINGLE_SHOT)
+    @Group(GROUP_NAME_BASELINE)
     @GroupThreads(WRITE_THREAD_COUNT)
-    public void baselineSingleShot(Blackhole blackhole) {
+    public void baselineSingleWord(Blackhole blackhole) {
         blackhole.consume(get());
     }
 
     @Benchmark
-    @Group(GROUP_NAME_SINGLE_SHOT)
+    @Group(GROUP_NAME_SINGLE_WORD)
     @GroupThreads(WRITE_THREAD_COUNT)
-    public void benchmarkAcceptSingleShot(WordBatchServiceState state) {
-        var word = get();
-        state.accept(word);
+    public void benchmarkAcceptSingleWord(WordBatchServiceState state) {
+        state.accept(get());
     }
 
     @Benchmark
-    @Group(GROUP_NAME_SINGLE_SHOT)
+    @Group(GROUP_NAME_SINGLE_WORD)
     @GroupThreads(READ_THREAD_COUNT)
-    public void benchmarkFlushSingleShot(WordBatchServiceState state, Blackhole blackhole) {
-        blackhole.consume(state.get().get());
+    public void benchmarkFlushSingleWord(WordBatchServiceState state, Blackhole blackhole) {
+        blackhole.consume(state.get());
     }
 
     public String get() {

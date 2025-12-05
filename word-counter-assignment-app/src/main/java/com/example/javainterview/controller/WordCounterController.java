@@ -1,6 +1,5 @@
 package com.example.javainterview.controller;
 
-import com.example.javainterview.service.Counter;
 import com.example.javainterview.service.WordBatchConsumer;
 import com.example.javainterview.service.WordBatchService;
 import org.slf4j.Logger;
@@ -11,15 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 @RestController
 public class WordCounterController {
@@ -34,7 +29,10 @@ public class WordCounterController {
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     public WordCounterController() {
-        executor.scheduleAtFixedRate(() -> consumer.flush(new WordCollectionConsumer()), 1L, 10L, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(() -> consumer.flush(
+                c -> log.info("Flush collected words: size={}", c.size())),
+                1L, 10L, TimeUnit.SECONDS
+        );
     }
 
     @PostMapping("/{word}")
@@ -47,13 +45,5 @@ public class WordCounterController {
     @GetMapping("/{word}")
     public ResponseEntity<Long> get(@PathVariable("word") String word) {
         return ResponseEntity.ok(words.getOrDefault(word, 0L));
-    }
-
-    private static class WordCollectionConsumer implements Consumer<Collection<Counter>> {
-
-        @Override
-        public void accept(Collection<Counter> collection) {
-            log.info("Flush collected words: size={}", collection.size());
-        }
     }
 }

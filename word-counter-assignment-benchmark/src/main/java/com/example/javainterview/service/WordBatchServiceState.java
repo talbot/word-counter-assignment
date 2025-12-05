@@ -10,8 +10,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@State(Scope.Benchmark)
-public class WordBatchServiceState implements Consumer<String>, Supplier<AtomicInteger> {
+@State(Scope.Group)
+public class WordBatchServiceState implements Consumer<String>, Supplier<Integer> {
 
     @Param({ "1024", "2048", "4096", })
     public int words;
@@ -29,9 +29,9 @@ public class WordBatchServiceState implements Consumer<String>, Supplier<AtomicI
     }
 
     @Override
-    public AtomicInteger get() {
+    public Integer get() {
         var size = new AtomicInteger();
         service.flush(c -> size.set(c.size()));
-        return size;
+        return size.get();
     }
 }
