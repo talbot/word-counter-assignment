@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 @State(Scope.Benchmark)
 public class WordBatchServiceState implements Consumer<String>, Supplier<AtomicInteger> {
 
-    @Param({ "64", "128", "256", })
+    @Param({ "1024", "2048", "4096", })
     public int words;
 
     private WordBatchConsumer service;
